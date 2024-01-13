@@ -1,0 +1,41 @@
+datasource db {
+  provider = "mongodb"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  email String @unique
+  password String
+  listedBooks UserBook[]
+}
+
+model Book {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  author String
+  userBook UserBook[]
+}
+
+model UserBook{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  user User @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+  book Book @relation(fields: [bookId], references: [id])
+  bookId String @db.ObjectId
+  dateAdded DateTime @default(now())
+  status Status @default(TOREAD)
+  dateConcluded DateTime?
+  score Int?
+}
+
+enum Status {
+  TOREAD
+  READING
+  COMPLETED
+}
