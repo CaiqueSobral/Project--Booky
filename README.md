@@ -14,6 +14,8 @@ npm run dev
 
 ## TODOs
 
+#### Componentizar
+
 #### Fazer a responsividade para dispositivos pequenos
 
 #### Melhorar a resistencia à erros
