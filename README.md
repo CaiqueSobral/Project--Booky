@@ -14,6 +14,8 @@ npm run dev
 
 ## TODOs
 
+#### Fazer a responsividade para positivos pequenos
+
 #### Melhorar a resistencia à erros
 
 #### melhor Tipagem
