@@ -1,7 +1,4 @@
-export async function authUser(
-  email: string,
-  password: string
-): Promise<boolean> {
+export async function authUser(email: string, password: string) {
   try {
     const response = await fetch('http://localhost:3001/api/user/auth', {
       method: 'POST',
@@ -16,7 +13,7 @@ export async function authUser(
 
     const auth = await response.json();
 
-    return auth;
+    return { user: auth, status: response.status };
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');

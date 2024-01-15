@@ -6,7 +6,24 @@ export async function createUser(req: Request, res: Response) {
   try {
     const { name, email, password } = req.body;
 
+    console.log('passei aqui');
+    console.log(name, email, password);
+
     const hashedPass = await bcrypt.hash(password, 15);
+
+    const userExist = await prisma.user.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        email: email,
+      },
+    });
+
+    if (userExist) {
+      res.status(401).json({ error: 'Email already in use' });
+      return;
+    }
 
     const user = await prisma.user.create({
       data: {

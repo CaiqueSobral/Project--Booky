@@ -167,3 +167,45 @@ export async function removeBookFromList(req: Request, res: Response) {
     }
   }
 }
+
+export async function updateBookFromList(req: Request, res: Response) {
+  try {
+    const { userId, id, status, dateConcluded, score } = req.body;
+
+    await prisma.userBook.update({
+      data: {
+        dateConcluded: dateConcluded,
+        status: status,
+        score: score,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    const user = await prisma.user.findFirst({
+      select: {
+        id: true,
+        name: true,
+        listedBooks: {
+          select: {
+            id: true,
+            bookId: true,
+            book: true,
+            dateAdded: true,
+            dateConcluded: true,
+            score: true,
+            status: true,
+          },
+        },
+      },
+      where: {
+        id: userId,
+      },
+    });
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}

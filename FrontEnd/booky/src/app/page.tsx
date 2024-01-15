@@ -18,9 +18,9 @@ export default function Login() {
         setErrorMessage('Preencha todos os campos.');
         return;
       }
-      const user = await authUser(email, pass);
+      const { user, status } = await authUser(email, pass);
 
-      if (!user) {
+      if (status !== 200) {
         throw new Error();
       }
 
@@ -60,6 +60,13 @@ export default function Login() {
           className="w-1/4 bg-purple-200 py-4 px-4 text-3xl font-bold uppercase rounded-full text-purple-800 text-center hover:bg-purple-300"
         >
           Login
+        </button>
+        <button
+          id="btnLogin"
+          onClick={() => router.push('/register')}
+          className="absolute bottom-2 left-2 py-1 px-2 text-xl font-semibold uppercase text-purple-100 text-center hover:bg-purple-300 underline"
+        >
+          Cadastro
         </button>
         {errorMessage && (
           <span className="text-base text-purple-100 text-center absolute bottom-8">

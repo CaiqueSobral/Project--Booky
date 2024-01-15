@@ -8,7 +8,7 @@ import { json } from 'stream/consumers';
 export default function HomePage() {
   const userContext = useContext(UserContext);
   const [openModal, setOpenModal] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [changing, setChanging] = useState(false);
   const router = useRouter();
 
   const [book, setBook] = useState('');
@@ -53,7 +53,7 @@ export default function HomePage() {
   };
 
   const deleteBook = async (id: string) => {
-    setDeleting(true);
+    setChanging(true);
     try {
       await fetch('http://localhost:3001/api/book/remove-book', {
         method: 'DELETE',
@@ -70,7 +70,45 @@ export default function HomePage() {
         user.listedBooks.length,
         ...user.listedBooks.filter((item: any) => item.id != id)
       );
-      setDeleting(false);
+      setChanging(false);
+    } catch (err) {
+      console.log('Error');
+    }
+  };
+
+  const updateBook = async (
+    id: string,
+    status: string,
+    dateConcluded: Date | null,
+    score: number | null
+  ) => {
+    setChanging(true);
+    try {
+      const response = await fetch(
+        'http://localhost:3001/api/book/update-book',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            id: id,
+            status: status,
+            dateConcluded: dateConcluded,
+            score: score,
+          }),
+        }
+      );
+
+      const newUser = await response.json();
+
+      user.listedBooks.splice(
+        0,
+        user.listedBooks.length,
+        ...newUser.listedBooks
+      );
+      setChanging(false);
     } catch (err) {
       console.log('Error');
     }
@@ -127,7 +165,12 @@ export default function HomePage() {
         {user &&
           user.listedBooks.map((item: any, i: any) => {
             return (
-              <BookCard key={i} listedBook={item} deleteBook={deleteBook} />
+              <BookCard
+                key={i}
+                listedBook={item}
+                deleteBook={deleteBook}
+                updateBook={updateBook}
+              />
             );
           })}
       </main>
