@@ -14,6 +14,8 @@ npm run dev
 
 ## TODOs
 
+#### Melhorar a resistencia à erros
+
 #### melhor Tipagem
 
 #### Excluir livros não usados
