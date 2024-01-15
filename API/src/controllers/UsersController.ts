@@ -6,9 +6,6 @@ export async function createUser(req: Request, res: Response) {
   try {
     const { name, email, password } = req.body;
 
-    console.log('passei aqui');
-    console.log(name, email, password);
-
     const hashedPass = await bcrypt.hash(password, 15);
 
     const userExist = await prisma.user.findFirst({
@@ -21,7 +18,7 @@ export async function createUser(req: Request, res: Response) {
     });
 
     if (userExist) {
-      res.status(401).json({ error: 'Email already in use' });
+      res.status(401).json({ error: 'Email already in use' }).end();
       return;
     }
 
@@ -55,14 +52,14 @@ export async function authUser(req: Request, res: Response) {
     });
 
     if (!user) {
-      res.status(401).json({ Unauthorized: 'Wrong email or Password' });
+      res.status(401).json({ Unauthorized: 'Wrong email or Password' }).end();
       return;
     }
 
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
-      res.status(401);
+      res.status(401).json({}).end();
       return;
     }
 
@@ -101,6 +98,8 @@ async function getUserById(id: string) {
         id: id,
       },
     });
+
+    console.dir(user);
 
     return user;
   } catch (err) {

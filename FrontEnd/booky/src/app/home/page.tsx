@@ -3,7 +3,6 @@ import { BookCard } from '@/components/BookCard';
 import { useContext, useState } from 'react';
 import { UserContext } from '../context/UserCtx';
 import { useRouter } from 'next/navigation';
-import { json } from 'stream/consumers';
 
 export default function HomePage() {
   const userContext = useContext(UserContext);
@@ -52,7 +51,7 @@ export default function HomePage() {
     }
   };
 
-  const deleteBook = async (id: string) => {
+  const deleteBook = async (id: string, bookId: string) => {
     setChanging(true);
     try {
       await fetch('http://localhost:3001/api/book/remove-book', {
@@ -62,6 +61,7 @@ export default function HomePage() {
         },
         body: JSON.stringify({
           id: id,
+          bookId: bookId,
         }),
       });
 

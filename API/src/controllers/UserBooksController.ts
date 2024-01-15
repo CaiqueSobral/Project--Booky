@@ -151,21 +151,23 @@ export async function removeBookFromList(req: Request, res: Response) {
     res.status(200).json('Book deleted from list');
   } catch (err) {
     res.status(500).json({ error: 'Internal Server Error' });
-  } finally {
-    const userBook = await prisma.userBook.findFirst({
-      where: {
-        id: req.body.bookId,
-      },
-    });
-
-    if (!userBook) {
-      await prisma.book.delete({
-        where: {
-          id: req.body.bookId,
-        },
-      });
-    }
   }
+
+  // finally {
+  //   const userBook = await prisma.userBook.findFirst({
+  //     where: {
+  //       id: req.body.bookId,
+  //     },
+  //   });
+
+  //   if (!userBook) {
+  //     await prisma.book.delete({
+  //       where: {
+  //         id: req.body.bookId,
+  //       },
+  //     });
+  //   }
+  // }
 }
 
 export async function updateBookFromList(req: Request, res: Response) {

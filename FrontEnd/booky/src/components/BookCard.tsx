@@ -16,7 +16,7 @@ type Props = {
     score: number | null;
     status: string;
   };
-  deleteBook: (id: string) => void;
+  deleteBook: (id: string, bookId: string) => void;
   updateBook: (
     id: string,
     status: string,
@@ -52,7 +52,9 @@ export function BookCard(props: Props) {
   return (
     <div className="relative lg:w-[800px] lg:h-[300px] md:w-[600px] md:h-[300px] bg-purple-700 rounded-xl px-4 py-4 flex items-center justify-center gap-6 shadow-2xl">
       <span
-        onClick={() => props.deleteBook(props.listedBook.id)}
+        onClick={() =>
+          props.deleteBook(props.listedBook.id, props.listedBook.book.id)
+        }
         className="absolute top-2 left-4 font-semibold text-purple-100 text-xl"
       >
         X
