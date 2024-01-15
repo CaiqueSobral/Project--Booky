@@ -2,15 +2,15 @@
 
 #### Para rodar o back-end
 
-'''
+```
 npm run start:dev
-'''
+```
 
 #### Para rodar o front
 
-'''
+```
 npm run dev
-'''
+```
 
 ## TODOs
 
