@@ -14,7 +14,7 @@ npm run dev
 
 ## TODOs
 
-#### Fazer a responsividade para positivos pequenos
+#### Fazer a responsividade para dispositivos pequenos
 
 #### Melhorar a resistencia à erros
 
