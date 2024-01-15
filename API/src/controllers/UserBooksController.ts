@@ -64,7 +64,17 @@ async function addBookToUserList(id: string, bookId: string) {
       id: true,
       name: true,
       email: true,
-      listedBooks: true,
+      listedBooks: {
+        select: {
+          bookId: true,
+          book: true,
+          id: true,
+          dateAdded: true,
+          dateConcluded: true,
+          score: true,
+          status: true,
+        },
+      },
     },
   });
 }
@@ -90,7 +100,17 @@ async function createBookAndAddToList(userBook: UserBook) {
       id: true,
       name: true,
       email: true,
-      listedBooks: true,
+      listedBooks: {
+        select: {
+          bookId: true,
+          book: true,
+          id: true,
+          dateAdded: true,
+          dateConcluded: true,
+          score: true,
+          status: true,
+        },
+      },
     },
   });
 }

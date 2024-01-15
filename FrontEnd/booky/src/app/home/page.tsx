@@ -1,77 +1,136 @@
 'use client';
-
-import { useState } from 'react';
+import { BookCard } from '@/components/BookCard';
+import { useContext, useState } from 'react';
+import { UserContext } from '../context/UserCtx';
+import { useRouter } from 'next/navigation';
+import { json } from 'stream/consumers';
 
 export default function HomePage() {
-  const [selectedStatus, setStatus] = useState('Quero Ler');
+  const userContext = useContext(UserContext);
+  const [openModal, setOpenModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const router = useRouter();
 
-  const seila = [
-    {
-      book: 'As crônicas de Nárnia',
-      author: 'Com certeza um author',
-    },
-    { book: 'Harry Potter', author: 'JK Rolando' },
-    { book: 'As crônicas de Silva', author: 'Autor Silva' },
-    { book: 'As crônicas de Sauro', author: 'Autor Sauro' },
-    { book: 'As crônicas de Lopes', author: 'Autor Lopes' },
-    { book: 'As crônicas de Silva', author: 'O Autor da Silva' },
-  ];
+  const [book, setBook] = useState('');
+  const [author, setAuthor] = useState('');
+
+  const user = userContext.user;
+
+  if (!user) {
+    router.back();
+  }
+
+  const addBook = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/book/add-book', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: user.id,
+          title: book,
+          author: author,
+        }),
+      });
+
+      const newUser = await response.json();
+
+      if (newUser.error) {
+        setOpenModal(false);
+        return;
+      }
+
+      user.listedBooks.splice(
+        0,
+        user.listedBooks.length,
+        ...newUser.listedBooks
+      );
+      setOpenModal(false);
+    } catch (err) {
+      console.log('Error');
+    }
+  };
+
+  const deleteBook = async (id: string) => {
+    setDeleting(true);
+    try {
+      await fetch('http://localhost:3001/api/book/remove-book', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: id,
+        }),
+      });
+
+      user.listedBooks.splice(
+        0,
+        user.listedBooks.length,
+        ...user.listedBooks.filter((item: any) => item.id != id)
+      );
+      setDeleting(false);
+    } catch (err) {
+      console.log('Error');
+    }
+  };
+
   return (
-    <main className="w-full min-h-[100vh] flex items-center justify-center flex-col gap-16 my-8">
-      {seila.map((item, i) => {
-        return (
-          <div
-            key={i}
-            className="relative w-[800px] h-[300px] bg-purple-700 rounded-xl px-4 py-4 flex items-center justify-center gap-6 shadow-2xl"
-          >
-            <div className="flex-1 w-2/5 h-full  flex flex-col items-center justify-center gap-8">
-              <span className="text-2xl text-purple-100 bg-purple-400 rounded-xl px-4 py-2 font-semibold text-justify">
-                {item.book}
-              </span>
-              <span className="text-2xl text-purple-100 bg-purple-400 rounded-xl px-4 py-2 font-semibold">
-                {item.author}
-              </span>
-            </div>
-            <div className="flex-1 w-2/5 h-full rounded-xl flex flex-col items-center justify-center gap-6 bg-purple-400">
-              {selectedStatus === 'Concluído' ? (
-                <input
-                  type="text"
-                  about="Book Score"
-                  defaultValue={0}
-                  className="text-8xl text-purple-100 bg-purple-400 h-24 w-24 rounded-xl text-center align-middle"
-                ></input>
-              ) : (
-                <input
-                  type="text"
-                  about="Book Score"
-                  disabled
-                  value={'-'}
-                  className="text-8xl text-purple-100 bg-purple-400 h-24 w-24 rounded-xl text-center align-middle"
-                ></input>
-              )}
+    <>
+      <header className="w-full sticky top-0 flex flex-col items-center justify-center gap-8">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="mt-4 px-4 py-1 bg-purple-700 text-purple-100 rounded-xl"
+        >
+          Adicionar Livro
+        </button>
 
-              <select
-                id="status"
-                className="text-base font-semibold px-2 py-2 bg-purple-700 text-purple-100 rounded-xl"
-                onChange={(item) => {
-                  setStatus(item.target.value);
-                }}
+        {openModal && (
+          <div className="relative flex items-center justify-center">
+            <span
+              onClick={() => setOpenModal(false)}
+              className="absolute top-2 right-4 font-semibold text-purple-100 text-lg"
+            >
+              X
+            </span>
+            <div className="w-[500px] h-[250px] bg-purple-700 flex items-center justify-center rounded-xl shadow-2xl flex-col gap-4">
+              <div className="flex gap-2 flex-col">
+                <label className="text-purple-100 font-semibold">Livro: </label>
+                <input
+                  onChange={(item) => setBook(item.target.value)}
+                  type="text"
+                  className="text-purple-700 px-4 rounded-full font-semibold"
+                ></input>
+              </div>
+              <div className="flex gap-2 flex-col">
+                <label className="text-purple-100 font-semibold">Autor: </label>
+                <input
+                  onChange={(item) => setAuthor(item.target.value)}
+                  type="text"
+                  className="text-purple-700 px-4 rounded-full font-semibold"
+                ></input>
+              </div>
+
+              <button
+                onClick={() => addBook()}
+                className="bg-purple-400 text-purple-100 px-8 py-1 rounded-xl mt-4 font-semibold"
               >
-                <option about="reading status" value="Quero Ler">
-                  {'Quero ler'}
-                </option>
-                <option about="reading status" value="Lendo">
-                  {'Lendo'}
-                </option>
-                <option about="reading status" value="Concluído">
-                  {'Concluído'}
-                </option>
-              </select>
+                Adicionar
+              </button>
             </div>
-            <span className="absolute text-sm rounded-xl px-4 py-2 font-medium text-purple-100 bottom-2 left-2">{`Adicionado em ${'27/07/2001'}`}</span>
           </div>
-        );
-      })}
-    </main>
+        )}
+      </header>
+
+      <main className="relative w-full min-h-max flex items-center justify-start flex-col gap-16 my-8">
+        {user &&
+          user.listedBooks.map((item: any, i: any) => {
+            return (
+              <BookCard key={i} listedBook={item} deleteBook={deleteBook} />
+            );
+          })}
+      </main>
+    </>
   );
 }

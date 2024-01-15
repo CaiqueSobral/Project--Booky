@@ -22,9 +22,43 @@ export async function createUser(req: Request, res: Response) {
   }
 }
 
-export async function getUserById(req: Request, res: Response) {
+export async function authUser(req: Request, res: Response) {
   try {
-    const { id } = req.body;
+    const { email, password } = req.body;
+
+    const user = await prisma.user.findFirst({
+      select: {
+        id: true,
+        email: true,
+        password: true,
+      },
+      where: {
+        email: email,
+      },
+    });
+
+    if (!user) {
+      res.status(401).json({ Unauthorized: 'Wrong email or Password' });
+      return;
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+
+    if (!isValid) {
+      res.status(401);
+      return;
+    }
+
+    const userAuthorized = await getUserById(user.id);
+
+    res.status(200).json(userAuthorized);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+async function getUserById(id: string) {
+  try {
     const user = await prisma.user.findFirst({
       select: {
         id: true,
@@ -51,8 +85,8 @@ export async function getUserById(req: Request, res: Response) {
       },
     });
 
-    res.status(200).json({ user });
+    return user;
   } catch (err) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    throw new Error('Internal Server Error');
   }
 }

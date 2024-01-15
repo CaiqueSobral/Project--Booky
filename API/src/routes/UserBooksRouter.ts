@@ -3,5 +3,5 @@ import * as UserBookController from '../controllers/UserBooksController';
 
 export const booksRouter = Router();
 
-booksRouter.use('/add-book', UserBookController.addBookToList);
-booksRouter.use('/remove-book', UserBookController.removeBookFromList);
+booksRouter.post('/add-book', UserBookController.addBookToList);
+booksRouter.delete('/remove-book', UserBookController.removeBookFromList);

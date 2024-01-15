@@ -1,6 +1,7 @@
 import { Rubik } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';
+import UserCont from './context/UserCtx';
 
 export const metadata: Metadata = {
   title: 'Booky',
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={rubik.className}>
-        <div className="min-h-screen min-w-screen">{children}</div>
+        <div className="min-h-screen min-w-screen">
+          <UserCont>{children}</UserCont>
+        </div>
       </body>
     </html>
   );
